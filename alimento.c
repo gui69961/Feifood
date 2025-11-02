@@ -1,58 +1,59 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "alimento.h"
 #include "utils.h"
 
 void cadastrarAlimento() {
     Alimento a;
-    FILE* f = fopen("dados/alimentos.txt", "a");
+    a.id = rand() % 10000;
 
-    a.id = gerarIdUnico();
+    FILE* f = fopen("dados/alimentos.txt", "a");
+    if (f == NULL) {
+        perror("Erro ao abrir alimentos.txt");
+        exit(1);
+    }
+
     printf("Nome do alimento: ");
     limparBuffer();
-    fgets(a.nome, 50, stdin);
+    if (fgets(a.nome, sizeof(a.nome), stdin) == NULL) {
+        printf("Erro ao ler nome.\n");
+        fclose(f);
+        return;
+    }
     strtok(a.nome, "\n");
 
-    printf("Descrição: ");
-    fgets(a.descricao, 100, stdin);
-    strtok(a.descricao, "\n");
-
-    fprintf(f, "%d|%s|%s\n", a.id, a.nome, a.descricao);
+    fprintf(f, "%d|%s\n", a.id, a.nome);
     fclose(f);
 
-    printf("Alimento cadastrado com sucesso!\n");
+    printf("Alimento cadastrado com sucesso! ID: %d\n", a.id);
     pausarTela();
 }
 
-void excluirAlimento(int id) {
+void buscarAlimentoPorId(int idBuscado) {
     Alimento a;
-    FILE* f = fopen("dados/alimentos.txt", "r");
-    FILE* temp = fopen("dados/temp.txt", "w");
+    int encontrado = 0;
 
-    while (fscanf(f, "%d|%[^|]|%[^\n]\n", &a.id, a.nome, a.descricao) != EOF) {
-        if (a.id != id) {
-            fprintf(temp, "%d|%s|%s\n", a.id, a.nome, a.descricao);
+    FILE* f = fopen("dados/alimentos.txt", "r");
+    if (f == NULL) {
+        perror("Erro ao abrir alimentos.txt");
+        return;
+    }
+
+    while (fscanf(f, "%d|%[^\n]\n", &a.id, a.nome) != EOF) {
+        if (a.id == idBuscado) {
+            encontrado = 1;
+            break;
         }
     }
 
     fclose(f);
-    fclose(temp);
-    remove("dados/alimentos.txt");
-    rename("dados/temp.txt", "dados/alimentos.txt");
 
-    printf("Alimento excluído!\n");
-    pausarTela();
-}
-
-void listarAlimentos() {
-    Alimento a;
-    FILE* f = fopen("dados/alimentos.txt", "r");
-
-    printf("\n--- Lista de Alimentos ---\n");
-    while (fscanf(f, "%d|%[^|]|%[^\n]\n", &a.id, a.nome, a.descricao) != EOF) {
-        printf("ID: %d\nNome: %s\nDescrição: %s\n\n", a.id, a.nome, a.descricao);
+    if (encontrado) {
+        printf("✅ Alimento \"%s\" (ID %d) está disponível!\n", a.nome, a.id);
+    } else {
+        printf("❌ Alimento com ID %d não encontrado.\n", idBuscado);
     }
 
-    fclose(f);
     pausarTela();
 }
