@@ -4,59 +4,44 @@
 #include "usuario.h"
 #include "utils.h"
 
+// Cadastra um novo usuário 
 void cadastrarUsuario() {
-    Usuario u;
-
-    // Abrir o arquivo em modo append
-    FILE* f = fopen("dados/usuarios.txt", "a");
+    char nome[50], senha[20];
+    FILE* f = fopen("dados/usuarios.txt", "a"); // Abre arquivo de usuários
     if (f == NULL) {
-        perror("Erro ao abrir o arquivo de usuários");
-        exit(1); // Encerra o programa se não conseguir abrir
-    }
-
-    // Coletar nome
-    printf("Nome: ");
-    limparBuffer(); // Limpa o lixo do teclado
-    if (fgets(u.nome, sizeof(u.nome), stdin) == NULL) {
-        printf("Erro ao ler nome.\n");
-        fclose(f);
+        perror("Erro ao abrir usuarios.txt");
         return;
     }
-    strtok(u.nome, "\n"); // Remove o \n do final
 
-    // Coletar senha
+    // pede nome e senha
+    printf("Nome do usuário: ");
+    scanf("%s", nome);
     printf("Senha: ");
-    if (fgets(u.senha, sizeof(u.senha), stdin) == NULL) {
-        printf("Erro ao ler senha.\n");
-        fclose(f);
-        return;
-    }
-    strtok(u.senha, "\n");
+    scanf("%s", senha);
 
-    // Gravar no arquivo com separador seguro
-    fprintf(f, "%s|%s\n", u.nome, u.senha);
+    // Salva no formato: nome|senha
+    fprintf(f, "%s|%s\n", nome, senha);
     fclose(f);
 
     printf("Usuário cadastrado com sucesso!\n");
     pausarTela();
 }
 
+// validação
 int loginUsuario(char* nome, char* senha) {
-    Usuario u;
+    char linha[100], nomeArq[50], senhaArq[20];
     FILE* f = fopen("dados/usuarios.txt", "r");
-    if (f == NULL) {
-        perror("Erro ao abrir o arquivo de usuários");
-        return 0;
-    }
+    if (f == NULL) return 0;
 
-    // Leitura com separador '|'
-    while (fscanf(f, "%[^|]|%[^\n]\n", u.nome, u.senha) != EOF) {
-        if (strcmp(u.nome, nome) == 0 && strcmp(u.senha, senha) == 0) {
+    //Comparação nome e senha
+    while (fgets(linha, sizeof(linha), f)) {
+        sscanf(linha, "%[^|]|%s", nomeArq, senhaArq);
+        if (strcmp(nome, nomeArq) == 0 && strcmp(senha, senhaArq) == 0) {
             fclose(f);
-            return 1;
+            return 1; // Login válido
         }
     }
 
     fclose(f);
-    return 0;
+    return 0; // Login inválido
 }

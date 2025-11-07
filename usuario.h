@@ -1,12 +1,7 @@
 #ifndef USUARIO_H
 #define USUARIO_H
 
-typedef struct {
-    char nome[50];
-    char senha[20];
-} Usuario;
-
-void cadastrarUsuario();
-int loginUsuario(char* nome, char* senha);
+void cadastrarUsuario();              // Função para cadastrar novo usuário
+int loginUsuario(char* nome, char* senha); // Função para validar login
 
 #endif

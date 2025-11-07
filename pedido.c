@@ -5,28 +5,31 @@
 #include "utils.h"
 #include "alimento.h"
 
+// Cria um novo pedido com um alimento inicial
 int criarPedido(char* nomeUsuario, int idAlimento) {
-    int id = rand() % 10000;
-    FILE* f = fopen("dados/pedidos.txt", "a");
+    int id = rand() % 10000; // Gera ID aleatório para o pedido
+    FILE* f = fopen("dados/pedidos.txt", "a"); // Abre arquivo para adicionar pedido
     if (f == NULL) {
         perror("Erro ao abrir pedidos.txt");
         return -1;
     }
 
+    // Escreve o pedido na nossa formatação
     fprintf(f, "%d|%s|%d|0\n", id, nomeUsuario, idAlimento);
     fclose(f);
-    return id;
+    return id; // Retorna o ID gerado
 }
 
+// Exclui um pedido existente
 void excluirPedido(int idPedido) {
     if (!pedidoExiste(idPedido)) {
-        printf("❌ Pedido com ID %d não existe. Exclusão cancelada.\n", idPedido);
+        printf(" Pedido com ID %d não existe. Exclusão cancelada.\n", idPedido);
         pausarTela();
         return;
     }
 
     FILE* f = fopen("dados/pedidos.txt", "r");
-    FILE* temp = fopen("dados/temp.txt", "w");
+    FILE* temp = fopen("dados/temp.txt", "w"); // Arquivo temporário para reescrever os pedidos
     if (f == NULL || temp == NULL) {
         perror("Erro ao abrir arquivos");
         return;
@@ -37,7 +40,7 @@ void excluirPedido(int idPedido) {
     while (fgets(linha, sizeof(linha), f)) {
         sscanf(linha, "%d|", &id);
         if (id != idPedido) {
-            fputs(linha, temp);
+            fputs(linha, temp); // Copia pedidos diferentes do ID informado
         }
     }
 
@@ -50,6 +53,7 @@ void excluirPedido(int idPedido) {
     pausarTela();
 }
 
+// Avaliaçã0
 void avaliarPedido(int idPedido, int estrelas) {
     if (!pedidoExiste(idPedido)) {
         printf("❌ Pedido com ID %d não existe. Avaliação cancelada.\n", idPedido);
@@ -69,6 +73,7 @@ void avaliarPedido(int idPedido, int estrelas) {
     while (fgets(linha, sizeof(linha), f)) {
         sscanf(linha, "%d|%[^|]|%[^|]|%d", &id, nome, alimentos, &avaliacao);
         if (id == idPedido) {
+            // Atualiza a avaliação
             fprintf(temp, "%d|%s|%s|%d\n", id, nome, alimentos, estrelas);
         } else {
             fputs(linha, temp);
@@ -84,9 +89,10 @@ void avaliarPedido(int idPedido, int estrelas) {
     pausarTela();
 }
 
+// Adiciona um novo alimento a um pedido existente
 void adicionarAlimentoAoPedido(int idPedido, int idAlimento) {
     if (!pedidoExiste(idPedido)) {
-        printf("❌ Pedido com ID %d não existe. Operação cancelada.\n", idPedido);
+        printf(" Pedido com ID %d não existe. Operação cancelada.\n", idPedido);
         pausarTela();
         return;
     }
@@ -104,6 +110,7 @@ void adicionarAlimentoAoPedido(int idPedido, int idAlimento) {
     while (fgets(linha, sizeof(linha), f)) {
         sscanf(linha, "%d|%[^|]|%[^|]|%d", &id, nome, alimentos, &avaliacao);
         if (id == idPedido) {
+            // Adiciona novo ID de alimento à lista existente
             char novoAlimentos[250];
             snprintf(novoAlimentos, sizeof(novoAlimentos), "%s,%d", alimentos, idAlimento);
             fprintf(temp, "%d|%s|%s|%d\n", id, nome, novoAlimentos, avaliacao);
@@ -117,10 +124,11 @@ void adicionarAlimentoAoPedido(int idPedido, int idAlimento) {
     remove("dados/pedidos.txt");
     rename("dados/temp.txt", "dados/pedidos.txt");
 
-    printf("✅ Alimento %d adicionado ao pedido %d\n", idAlimento, idPedido);
+    printf(" Alimento %d adicionado ao pedido %d\n", idAlimento, idPedido);
     pausarTela();
 }
 
+// Verifica se um pedido existe no arquivo
 int pedidoExiste(int idBuscado) {
     FILE* f = fopen("dados/pedidos.txt", "r");
     if (f == NULL) {
@@ -134,34 +142,35 @@ int pedidoExiste(int idBuscado) {
         sscanf(linha, "%d|", &id);
         if (id == idBuscado) {
             fclose(f);
-            return 1;
+            return 1; // Pedido encontrado
         }
     }
 
     fclose(f);
-    return 0;
+    return 0; // Pedido não encontrado
 }
 
+// usuário fazer um novo pedido
 void fazerPedido(char* nomeUsuario) {
     int idAlimento;
 
-    listarAlimentos();
+    listarAlimentos(); // Mostra alimentos disponíveis
 
     printf("\nDigite o ID do alimento que deseja pedir: ");
     scanf("%d", &idAlimento);
 
     if (!alimentoExiste(idAlimento)) {
-        printf("❌ Alimento com ID %d não existe. Pedido cancelado.\n", idAlimento);
+        printf(" Alimento com ID %d não existe. Pedido cancelado.\n", idAlimento);
         pausarTela();
         return;
     }
 
-    int idPedido = criarPedido(nomeUsuario, idAlimento);
+    int idPedido = criarPedido(nomeUsuario, idAlimento); // Cria o pedido
 
     if (idPedido != -1) {
-        printf("✅ Pedido realizado com sucesso! ID do pedido: %d\n", idPedido);
+        printf(" Pedido realizado com sucesso! ID do pedido: %d\n", idPedido);
     } else {
-        printf("❌ Erro ao criar o pedido.\n");
+        printf(" Erro ao criar o pedido.\n");
     }
 
     pausarTela();
