@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "usuario.h"
-#include "utils.h"
+#include "ferramentas.h"
 
 // Cadastra um novo usuário
 void cadastrarUsuario() {

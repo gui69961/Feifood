@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pedido.h"
-#include "utils.h"
+#include "ferramentas.h"
 #include "alimento.h"
 
 int criarPedido(char* nomeUsuario, int idAlimento) {

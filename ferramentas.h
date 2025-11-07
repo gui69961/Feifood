@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef FERRAMENTAS_H_H
+#define FERRAMENTAS_H
 
 void limparBuffer();
 void pausarTela();

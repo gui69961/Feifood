@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "admin.h"
-#include "utils.h"
+#include "ferramentas.h"
 
 // Cadastra um novo administrador
 void cadastrarAdministrador() {

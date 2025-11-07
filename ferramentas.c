@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "utils.h"
+#include "ferramentas.h"
 
 // Limpa o buffer do teclado
 void limparBuffer() {

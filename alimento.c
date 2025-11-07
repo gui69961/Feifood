@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "alimento.h"
-#include "utils.h"
+#include "ferramentas.h"
 
 // Cadastra um novo alimento vinculado a um estabelecimento
 void cadastrarAlimento() {

@@ -5,9 +5,9 @@
 #include "admin.h"
 #include "alimento.h"
 #include "pedido.h"
-#include "utils.h"
+#include "ferramentas.h"
 
-// Menu para o usuário comum
+// Menu do usuário
 void menuUsuario(char* nome) {
     int opcao, idPedido, idAlimento;
 
@@ -17,6 +17,7 @@ void menuUsuario(char* nome) {
         printf("2. Excluir pedido\n");
         printf("3. Adicionar alimento ao pedido\n");
         printf("4. Avaliar alimento\n");
+        printf("5. Excluir alimento\n");
         printf("0. Sair\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
@@ -36,7 +37,7 @@ void menuUsuario(char* nome) {
                 scanf("%d", &idPedido);
 
                 if (!pedidoExiste(idPedido)) {
-                    printf(" Pedido com ID %d não existe. Operação cancelada.\n", idPedido);
+                    printf("❌ Pedido com ID %d não existe.\n", idPedido);
                     pausarTela();
                     break;
                 }
@@ -45,7 +46,7 @@ void menuUsuario(char* nome) {
                 scanf("%d", &idAlimento);
 
                 if (!alimentoExiste(idAlimento)) {
-                    printf(" Alimento com ID %d não existe.\n", idAlimento);
+                    printf("❌ Alimento com ID %d não existe.\n", idAlimento);
                     pausarTela();
                     break;
                 }
@@ -55,11 +56,14 @@ void menuUsuario(char* nome) {
             case 4:
                 avaliarAlimento();
                 break;
-         
+            case 5:
+                excluirAlimento();
+                break;
+        }
     } while (opcao != 0);
 }
 
-// Menu para o administrador
+// Menu do administrador
 void menuAdmin() {
     int opcao;
 
