@@ -8,26 +8,14 @@ void cadastrarAdministrador() {
     char nome[50], senha[20];
     FILE* f = fopen("dados/administradores.txt", "a");
     if (f == NULL) {
-        perror("Erro ao abrir o arquivo de administradores");
-        exit(1);
+        perror("Erro ao abrir administradores.txt");
+        return;
     }
 
     printf("Nome do administrador: ");
-    limparBuffer();
-    if (fgets(nome, sizeof(nome), stdin) == NULL) {
-        printf("Erro ao ler nome.\n");
-        fclose(f);
-        return;
-    }
-    strtok(nome, "\n");
-
+    scanf("%s", nome);
     printf("Senha: ");
-    if (fgets(senha, sizeof(senha), stdin) == NULL) {
-        printf("Erro ao ler senha.\n");
-        fclose(f);
-        return;
-    }
-    strtok(senha, "\n");
+    scanf("%s", senha);
 
     fprintf(f, "%s|%s\n", nome, senha);
     fclose(f);
@@ -37,15 +25,13 @@ void cadastrarAdministrador() {
 }
 
 int loginAdministrador(char* nome, char* senha) {
-    char nomeArq[50], senhaArq[20];
+    char linha[100], nomeArq[50], senhaArq[20];
     FILE* f = fopen("dados/administradores.txt", "r");
-    if (f == NULL) {
-        perror("Erro ao abrir o arquivo de administradores");
-        return 0;
-    }
+    if (f == NULL) return 0;
 
-    while (fscanf(f, "%[^|]|%[^\n]\n", nomeArq, senhaArq) != EOF) {
-        if (strcmp(nomeArq, nome) == 0 && strcmp(senhaArq, senha) == 0) {
+    while (fgets(linha, sizeof(linha), f)) {
+        sscanf(linha, "%[^|]|%s", nomeArq, senhaArq);
+        if (strcmp(nome, nomeArq) == 0 && strcmp(senha, senhaArq) == 0) {
             fclose(f);
             return 1;
         }
@@ -53,4 +39,63 @@ int loginAdministrador(char* nome, char* senha) {
 
     fclose(f);
     return 0;
+}
+
+void mostrarEstatisticas() {
+    FILE* f = fopen("dados/pedidos.txt", "r");
+    if (f == NULL) {
+        perror("Erro ao abrir pedidos.txt");
+        return;
+    }
+
+    int total = 0;
+    char linha[300];
+    while (fgets(linha, sizeof(linha), f)) {
+        total++;
+    }
+
+    fclose(f);
+
+    printf("\n--- Estatísticas ---\n");
+    printf("Total de pedidos: %d\n", total);
+    pausarTela();
+}
+
+void cadastrarEstabelecimento() {
+    int id = rand() % 10000;
+    char nome[50];
+    FILE* f = fopen("dados/estabelecimentos.txt", "a");
+    if (f == NULL) {
+        perror("Erro ao abrir estabelecimentos.txt");
+        return;
+    }
+
+    printf("Nome do estabelecimento: ");
+    scanf(" %[^\n]", nome);
+
+    fprintf(f, "%d|%s\n", id, nome);
+    fclose(f);
+
+    printf("Estabelecimento cadastrado com ID %d\n", id);
+    pausarTela();
+}
+
+
+void consultarUsuarios() {
+    FILE* f = fopen("dados/usuarios.txt", "r");
+    if (f == NULL) {
+        perror("Erro ao abrir usuarios.txt");
+        return;
+    }
+
+    char linha[100], nome[50], senha[20];
+    printf("\n--- Lista de Usuários ---\n");
+
+    while (fgets(linha, sizeof(linha), f)) {
+        sscanf(linha, "%[^|]|%s", nome, senha);
+        printf("- %s\n", nome);
+    }
+
+    fclose(f);
+    pausarTela();
 }

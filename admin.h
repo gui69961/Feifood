@@ -1,7 +1,10 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-int loginAdministrador(char* nome, char* senha);
 void cadastrarAdministrador();
+int loginAdministrador(char* nome, char* senha);
+void mostrarEstatisticas();
+void cadastrarEstabelecimento();
+void consultarUsuarios();
 
 #endif

@@ -5,7 +5,6 @@
 #include "admin.h"
 #include "alimento.h"
 #include "pedido.h"
-#include "avaliacao.h"
 #include "utils.h"
 
 void menuUsuario(char* nome) {
@@ -13,42 +12,51 @@ void menuUsuario(char* nome) {
 
     do {
         printf("\n--- Menu do Usuário (%s) ---\n", nome);
-        printf("1. Buscar alimento por \n");
-        printf("2. Criar pedido\n");
-        printf("3. Excluir pedido\n");
+        printf("1. Fazer pedido\n");
+        printf("2. Excluir pedido\n");
+        printf("3. Avaliar pedido\n");
         printf("4. Adicionar alimento ao pedido\n");
-        printf("5. Avaliar pedido\n");
         printf("0. Sair\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
-                printf("ID do alimento: ");
-                scanf("%d", &idAlimento);
-                buscarAlimentoPorId(idAlimento);
+                fazerPedido(nome);
                 break;
             case 2:
-                criarPedido(nome);
-                break;
-            case 3:
                 printf("ID do pedido: ");
                 scanf("%d", &idPedido);
                 excluirPedido(idPedido);
                 break;
-            case 4:
-                printf("ID do pedido: ");
-                scanf("%d", &idPedido);
-                printf("ID do alimento: ");
-                scanf("%d", &idAlimento);
-                adicionarAlimentoAoPedido(idPedido, idAlimento);
-                break;
-            case 5:
+            case 3:
                 printf("ID do pedido: ");
                 scanf("%d", &idPedido);
                 printf("Nota (0 a 5): ");
                 scanf("%d", &estrelas);
                 avaliarPedido(idPedido, estrelas);
+                break;
+            case 4:
+                listarAlimentos();
+                printf("ID do pedido: ");
+                scanf("%d", &idPedido);
+
+                if (!pedidoExiste(idPedido)) {
+                    printf("❌ Pedido com ID %d não existe. Operação cancelada.\n", idPedido);
+                    pausarTela();
+                    break;
+                }
+
+                printf("ID do alimento: ");
+                scanf("%d", &idAlimento);
+
+                if (!alimentoExiste(idAlimento)) {
+                    printf("❌ Alimento com ID %d não existe.\n", idAlimento);
+                    pausarTela();
+                    break;
+                }
+
+                adicionarAlimentoAoPedido(idPedido, idAlimento);
                 break;
         }
     } while (opcao != 0);
@@ -60,7 +68,10 @@ void menuAdmin() {
     do {
         printf("\n--- Menu do Administrador ---\n");
         printf("1. Cadastrar alimento\n");
-        printf("2. Mostrar estatísticas\n");
+        printf("2. Excluir alimento\n");
+        printf("3. Cadastrar estabelecimento\n");
+        printf("4. Consultar usuários\n");
+        printf("5. Mostrar estatísticas\n");
         printf("0. Sair\n");
         printf("Escolha: ");
         scanf("%d", &opcao);
@@ -70,11 +81,21 @@ void menuAdmin() {
                 cadastrarAlimento();
                 break;
             case 2:
+                excluirAlimento();
+                break;
+            case 3:
+                cadastrarEstabelecimento();
+                break;
+            case 4:
+                consultarUsuarios();
+                break;
+            case 5:
                 mostrarEstatisticas();
                 break;
         }
     } while (opcao != 0);
 }
+
 
 int main() {
     int tipo;
