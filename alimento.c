@@ -4,23 +4,21 @@
 #include "alimento.h"
 #include "utils.h"
 
-// Cadastra um novo alimento 
+// Cadastra um novo alimento vinculado a um estabelecimento
 void cadastrarAlimento() {
-    int id = rand() % 10000; // Gera ID aleatório para o alimento
+    int id = rand() % 10000;
     char nome[50];
     int idEstab;
 
-    FILE* f = fopen("dados/alimentos.txt", "a"); // Abre arquivo de alimentos
+    FILE* f = fopen("dados/alimentos.txt", "a");
     if (f == NULL) {
         perror("Erro ao abrir alimentos.txt");
         return;
     }
 
-    // Solicita nome do alimento
     printf("Nome do alimento: ");
     scanf(" %[^\n]", nome);
 
-    // Exibe estabelecimentos disponíveis
     FILE* est = fopen("dados/estabelecimentos.txt", "r");
     if (est == NULL) {
         perror("Erro ao abrir estabelecimentos.txt");
@@ -37,11 +35,9 @@ void cadastrarAlimento() {
     }
     fclose(est);
 
-    // Solicita ID do estabelecimento
     printf("ID do estabelecimento: ");
     scanf("%d", &idEstab);
 
-    // Salva alimento com o estabelecimento
     fprintf(f, "%d|%s|%d\n", id, nome, idEstab);
     fclose(f);
 
@@ -49,7 +45,7 @@ void cadastrarAlimento() {
     pausarTela();
 }
 
-// Lista todos os alimentos com nome do estabelecimento
+// Lista alimentos com nome do estabelecimento
 void listarAlimentos() {
     FILE* fAlimentos = fopen("dados/alimentos.txt", "r");
     FILE* fEstabs = fopen("dados/estabelecimentos.txt", "r");
@@ -58,7 +54,6 @@ void listarAlimentos() {
         return;
     }
 
-    // armazenando estabelecimentos
     typedef struct {
         int id;
         char nome[50];
@@ -68,14 +63,12 @@ void listarAlimentos() {
     int totalEstabs = 0;
     char linha[100];
 
-    // Carrega estabelecimentos em memória
     while (fgets(linha, sizeof(linha), fEstabs)) {
         sscanf(linha, "%d|%[^\n]", &estabs[totalEstabs].id, estabs[totalEstabs].nome);
         totalEstabs++;
     }
     fclose(fEstabs);
 
-    // Exibe alimentos com nome do estabelecimento
     printf("\n--- Lista de Alimentos ---\n");
     int idAlimento, idEstab;
     char nomeAlimento[50];
@@ -83,7 +76,6 @@ void listarAlimentos() {
     while (fgets(linha, sizeof(linha), fAlimentos)) {
         sscanf(linha, "%d|%[^|]|%d", &idAlimento, nomeAlimento, &idEstab);
 
-        // Procura nome do estabelecimento
         char nomeEstab[50] = "Desconhecido";
         for (int i = 0; i < totalEstabs; i++) {
             if (estabs[i].id == idEstab) {
@@ -98,7 +90,7 @@ void listarAlimentos() {
     fclose(fAlimentos);
 }
 
-// Verifica se um alimento existe pelo ID
+// Verifica se alimento existe
 int alimentoExiste(int idBuscado) {
     FILE* f = fopen("dados/alimentos.txt", "r");
     if (f == NULL) return 0;
@@ -117,7 +109,7 @@ int alimentoExiste(int idBuscado) {
     return 0;
 }
 
-// Exclui um alimento do sistema
+// Exclui alimento do sistema
 void excluirAlimento() {
     int idAlimento;
     printf("ID do alimento a excluir: ");
@@ -141,7 +133,7 @@ void excluirAlimento() {
     while (fgets(linha, sizeof(linha), f)) {
         sscanf(linha, "%d|", &id);
         if (id != idAlimento) {
-            fputs(linha, temp); // Copia alimentos diferentes do ID informado
+            fputs(linha, temp);
         }
     }
 
@@ -151,5 +143,41 @@ void excluirAlimento() {
     rename("dados/temp.txt", "dados/alimentos.txt");
 
     printf(" Alimento %d excluído com sucesso.\n", idAlimento);
+    pausarTela();
+}
+
+// Avalia alimento com nota de 0 a 5
+void avaliarAlimento() {
+    int idAlimento, nota;
+
+    listarAlimentos();
+    printf("\nID do alimento que deseja avaliar: ");
+    scanf("%d", &idAlimento);
+
+    if (!alimentoExiste(idAlimento)) {
+        printf("❌ Alimento com ID %d não existe.\n", idAlimento);
+        pausarTela();
+        return;
+    }
+
+    printf("Nota (0 a 5): ");
+    scanf("%d", &nota);
+
+    if (nota < 0 || nota > 5) {
+        printf(" Nota inválida.\n");
+        pausarTela();
+        return;
+    }
+
+    FILE* f = fopen("dados/avaliacoes.txt", "a");
+    if (f == NULL) {
+        perror("Erro ao abrir avaliacoes.txt");
+        return;
+    }
+
+    fprintf(f, "%d|%d\n", idAlimento, nota);
+    fclose(f);
+
+    printf(" Avaliação registrada com sucesso!\n");
     pausarTela();
 }
