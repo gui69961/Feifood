@@ -31,7 +31,7 @@ alimentos.txt — alimentos disponíveis
 pedidos.txt — pedidos realizados
 
 ### 3. Compile os arquivos
-gcc main.c usuario.c admin.c alimentos.c pedido.c utils.c -o feifood
+gcc main.c usuario.c admin.c alimento.c pedido.c ferramentas.c -o feifood
 
 ### 4. Execute o programa
 ./feifood

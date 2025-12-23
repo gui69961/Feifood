@@ -1,10 +1,7 @@
-6915|batata|9383
-7793|pastel|9383
-8335|lanche natural|9383
-5386|café|9383
-492|chocolate|9383
-6649|coxinha|9383
-9383|nhoque|9383
-886|suco|9383
-6915|PF|9383
-9383|sushi|9383
+
+9383|batata|9383
+886|PF|9383
+2777|Torta de frango|9383
+6915|Uva|9383
+7793|Banana|9383
+8335|Salmao|9383

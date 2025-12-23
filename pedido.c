@@ -18,6 +18,26 @@ int criarPedido(char* nomeUsuario, int idAlimento) {
     return id;
 }
 
+int proximoIdPedido() {
+    FILE* f = fopen("dados/pedidos.txt", "r");
+    if (f == NULL) {
+        
+        return 1;
+    }
+
+    int id, ultimoId = 0;
+    char linha[256];
+
+    while (fgets(linha, sizeof(linha), f)) {
+        sscanf(linha, "%d|", &id);
+        ultimoId = id;
+    }
+
+    fclose(f);
+    return ultimoId + 1;
+}
+
+
 void excluirPedido(int idPedido) {
     if (!pedidoExiste(idPedido)) {
         printf(" Pedido com ID %d não existe. Exclusão cancelada.\n", idPedido);
