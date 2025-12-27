@@ -43,10 +43,10 @@ int loginAdministrador(char* nome, char* senha) {
     return 0;
 }
 
-// Cadastra um novo estabelecimento
 void cadastrarEstabelecimento() {
-    int id = rand() % 10000;
+    int id = gerarNovoIdEstabelecimento();
     char nome[50];
+
     FILE* f = fopen("dados/estabelecimentos.txt", "a");
     if (f == NULL) {
         perror("Erro ao abrir estabelecimentos.txt");
@@ -62,6 +62,24 @@ void cadastrarEstabelecimento() {
     printf("Estabelecimento cadastrado com ID %d\n", id);
     pausarTela();
 }
+
+int gerarNovoIdEstabelecimento() {
+    FILE* f = fopen("dados/estabelecimentos.txt", "r");
+    int maiorId = 0, id;
+    char linha[100];
+
+    if (f != NULL) {
+        while (fgets(linha, sizeof(linha), f)) {
+            sscanf(linha, "%d|", &id);
+            if (id > maiorId)
+                maiorId = id;
+        }
+        fclose(f);
+    }
+
+    return maiorId + 1;
+}
+
 
 // Lista todos os usuários cadastrados
 void consultarUsuarios() {
